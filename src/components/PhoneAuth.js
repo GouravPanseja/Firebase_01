@@ -17,7 +17,8 @@ export default function PhoneAuth() {
     const [loading, setLoading] = useState(false);
     const [showOTP, setShowOTP] = useState(false);
     const [user,setUser] = useState(null);
-
+    
+    // STEP 2;
     function onCaptchaVerify(){
         if(!window.recaptchaVerifier){
             window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
@@ -32,19 +33,23 @@ export default function PhoneAuth() {
         }
     }
     
+    // STEP 1; AND STEP 3
     function onSignup(){
         setLoading(true);
         onCaptchaVerify();
+
 
         const appVerifier = window.recaptchaVerifier;
 
         const formatPh ='+'  + ph;
         console.log(formatPh);
+        console.log(appVerifier);
 
         signInWithPhoneNumber(auth, formatPh, appVerifier)
             .then((confirmationResult) => {
              
                 window.confirmationResult = confirmationResult;
+                console.log(confirmationResult);
                 setLoading(false);
                 setShowOTP(true);
                 toast.success('OTP sent successfully!')
@@ -57,18 +62,21 @@ export default function PhoneAuth() {
 
     }
     
+    // STEP 4
     function onOTPVerify(){
         setLoading(true);
+
         window.confirmationResult.confirm(otp)
-        .then( async(result)=>{
-            console.log(result.user);
-            setUser(result.user);
-            setLoading(false); 
-        })
-        .catch((error)=>{
-            console.log(error);
-            setLoading(false);
-        })
+            .then( async(result)=>{
+                
+                setUser(result.user);
+                
+                
+            })
+            .catch((error)=>{
+                console.log(error);
+              
+            })
 
     }
     

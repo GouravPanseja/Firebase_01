@@ -2,12 +2,26 @@ import logo from './logo.svg';
 import './App.css';
 import Auth from './components/Auth';
 import PhoneAuth from './components/PhoneAuth';
+import { Routes ,Route,useNavigate} from 'react-router-dom';
+import Firestore from "./components/Firestore";
 
 
 function App() {
+  const navigate = useNavigate();
   return (
-    <div className="App">
-        <PhoneAuth/>
+    <div className="App bg-emerald-500">
+        <nav className='flex justify-around h-[40px] w-screen'>
+            <div onClick={()=>{navigate("/Phone")}} className='cursor-pointer'>SMS</div>
+            <div onClick={()=>{navigate("/Auth")}} className='cursor-pointer'>Email</div>
+            <div onClick={()=>{navigate("/")}} className='cursor-pointer'>database</div>
+        </nav>
+
+        <Routes>
+            <Route path="/" element={<Firestore/>}/>
+            <Route path="/Phone" element={<PhoneAuth/>}/>
+            <Route path="/Auth" element={<Auth/>}/>
+        </Routes>
+        
     
     </div>
   );

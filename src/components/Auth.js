@@ -1,6 +1,7 @@
 import { useState,useRef } from "react";
-import {auth,googleProvider} from "../config/firebase"
+import {auth,googleProvider} from "../config/firebase";
 import { createUserWithEmailAndPassword,signInWithPopup,signOut,signInWithEmailAndPassword } from "firebase/auth";
+
 function Auth(){
 
     const [email,setEmail] = useState("");
@@ -56,7 +57,7 @@ function Auth(){
         
     }
     return(
-        <div>
+        <div className="bg-emerald-500 h-screen">
             <div>
                 <input placeholder="Email" onChange={(e)=>{setEmail(e.target.value)}}/> 
                 <br/>
