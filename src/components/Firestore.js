@@ -1,6 +1,6 @@
 import {useState,useEffect} from "react"
 import {db} from "../config/firebase";
-import { getDocs,collection, addDoc, deleteDoc, doc} from "firebase/firestore";
+import { getDocs,collection, addDoc, deleteDoc, doc, updateDoc} from "firebase/firestore";
 
 export default function Firestore(){
     const [movieList , setMovieList] = useState([]);
@@ -10,6 +10,7 @@ export default function Firestore(){
     const [formTitle, setFormTitle] = useState("");
     const [formReleaseYear, setFormReleaseYear] = useState(0);
     const [formWonOscar, setFormWonOscar] = useState(false);
+    const [updatedTitle, setUpdatedTitle] = useState("");
 
     const getMoviesList = async ()=>{
         try{
@@ -61,6 +62,11 @@ export default function Firestore(){
         getMoviesList();
     }
 
+    const updateTitle = async(id)=>{
+        const movieDoc = doc(db,"Movies",id);
+        await updateDoc(movieDoc,{title:updatedTitle} )
+        getMoviesList();
+    }
 
 
     return (
@@ -103,12 +109,15 @@ export default function Firestore(){
                     movieList &&
                     movieList.map((doc)=>(
 
-                        <div className=" bg-gray-700 rounded w-[150px] h-[100px] flex flex-col justify-center text-white">
+                        <div className=" bg-gray-700 rounded w-[150px] h-[180px] flex flex-col justify-center text-white">
                             <h2>{doc.title}</h2>
                             <h3>{doc.releaseYear}</h3>
                             <h3>{doc.wonOscar ? "Oscar" : "No oscar"}</h3>
 
                             <button onClick={()=> deleteMovie(doc.id)}  className="bg-black w-[80%] mx-auto rounded"> Delete </button>
+
+                            <input className="w-[80%] mx-auto rounded mt-2 mb-2 text-black" placeholder="update title..." value={updatedTitle} onChange={(e)=> setUpdatedTitle(e.target.value)}/>
+                            <button onClick={()=> updateTitle(doc.id)}  className="bg-black w-[80%] mx-auto rounded">update</button>
                         </div>
                     ))
                 }
