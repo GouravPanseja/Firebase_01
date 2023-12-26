@@ -1,13 +1,13 @@
 import { useState,useRef } from "react";
 import {auth,googleProvider} from "../config/firebase"
-import { createUserWithEmailAndPassword,signInWithRedirect,signOut,signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword,signInWithPopup,signOut,signInWithEmailAndPassword } from "firebase/auth";
 function Auth(){
 
     const [email,setEmail] = useState("");
     const [password,setPassword] = useState("");
     const display = useRef();
 
-    console.log(auth?.currentUser?.email)
+    console.log(auth?.currentUser?.email);
 
     const displayText =(text)=>{ 
         display.current.innerHTML = text
@@ -15,8 +15,8 @@ function Auth(){
     }
     const signUpwithGoogle= async ()=>{
         try{
-            await signInWithRedirect(auth,googleProvider);
-            displayText(`signedUp with google ${email} `)
+            await signInWithPopup(auth,googleProvider);
+            displayText(`signedUp with google ${auth?.currentUser?.email} `)
         } 
         catch(e){
             displayText(e);

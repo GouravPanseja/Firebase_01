@@ -20,6 +20,7 @@ const app = initializeApp(firebaseConfig);
 //it to be used elsewhere
 
 export const auth = getAuth(app);
+auth.useDeviceLanguage();
 export const googleProvider =  new GoogleAuthProvider();
 
 
