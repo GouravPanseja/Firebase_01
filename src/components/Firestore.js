@@ -35,7 +35,7 @@ export default function Firestore(){
     },[] )
     
     async function submitMovieHandler(){
-        
+         
 
         try{
             await addDoc(movieCollectionRef, {
