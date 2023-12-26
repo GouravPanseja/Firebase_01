@@ -1,6 +1,6 @@
 import {useState,useEffect} from "react"
 import {db} from "../config/firebase";
-import { getDocs,collection, addDoc} from "firebase/firestore";
+import { getDocs,collection, addDoc, deleteDoc, doc} from "firebase/firestore";
 
 export default function Firestore(){
     const [movieList , setMovieList] = useState([]);
@@ -16,7 +16,11 @@ export default function Firestore(){
             const data = await getDocs(movieCollectionRef);
             const finalList = data.docs.map((doc)=>{
                 return ( 
-                    doc.data()
+                    {
+                        ...doc.data(),
+                        id:doc.id,
+                    }
+                    
                      );
             })
 
@@ -36,7 +40,6 @@ export default function Firestore(){
     
     async function submitMovieHandler(){
          
-
         try{
             await addDoc(movieCollectionRef, {
                 title: formTitle,
@@ -50,6 +53,15 @@ export default function Firestore(){
         }
         
     }
+
+    const deleteMovie = async (id)=>{
+       
+        const movieDoc = doc(db,"Movies",id);
+        await deleteDoc(movieDoc); 
+        getMoviesList();
+    }
+
+
 
     return (
         <div className="h-screen w-screen bg-emerald-500 justify-around  ">
@@ -86,7 +98,7 @@ export default function Firestore(){
                 </button>
                 
             </div>
-            <div className="flex">
+            <div className="flex gap-5 justify-center flex-wrap">
                 {
                     movieList &&
                     movieList.map((doc)=>(
@@ -95,6 +107,8 @@ export default function Firestore(){
                             <h2>{doc.title}</h2>
                             <h3>{doc.releaseYear}</h3>
                             <h3>{doc.wonOscar ? "Oscar" : "No oscar"}</h3>
+
+                            <button onClick={()=> deleteMovie(doc.id)}  className="bg-black w-[80%] mx-auto rounded"> Delete </button>
                         </div>
                     ))
                 }
