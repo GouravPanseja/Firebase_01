@@ -56,6 +56,15 @@ function Auth(){
         }
         
     }
+    const showUser = ()=>{
+        if(auth?.currentUser?.email && auth?.currentUser?.uid){
+            displayText(`${auth?.currentUser?.email +" " + auth?.currentUser?.uid}`);
+        }
+        else{
+            displayText("No User");
+        }
+        
+    }
     return(
         <div className="bg-emerald-500 h-screen">
             <div>
@@ -71,6 +80,7 @@ function Auth(){
                 <button onClick={signUpwithGoogle}>Sign up with Google!</button>
                 <br/>
                 <button onClick={logOut}>Logout</button>
+                <button onClick={showUser}>show User</button>
             </div>
             <div>
                 <div ref={display}></div>

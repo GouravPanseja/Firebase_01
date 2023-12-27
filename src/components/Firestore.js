@@ -1,5 +1,5 @@
-import {useState,useEffect} from "react"
-import {db} from "../config/firebase";
+import {useState,useEffect,useRef} from "react"
+import {db,auth} from "../config/firebase";
 import { getDocs,collection, addDoc, deleteDoc, doc, updateDoc} from "firebase/firestore";
 
 export default function Firestore(){
@@ -11,6 +11,7 @@ export default function Firestore(){
     const [formReleaseYear, setFormReleaseYear] = useState(0);
     const [formWonOscar, setFormWonOscar] = useState(false);
     const [updatedTitle, setUpdatedTitle] = useState("");
+    const display = useRef();
 
     const getMoviesList = async ()=>{
         try{
@@ -38,7 +39,9 @@ export default function Firestore(){
     useEffect(()=>{
         getMoviesList();
     },[] )
-    
+    const displayText=(text)=>{
+        display.current.innerHTML = text;
+    }
     async function submitMovieHandler(){
          
         try{
@@ -46,11 +49,15 @@ export default function Firestore(){
                 title: formTitle,
                 releaseYear: formReleaseYear,
                 wonOscar: formWonOscar, 
+                uid:auth.currentUser.uid,
             })
+            // refresh movies
             getMoviesList();
         }
         catch(error){
-            console.log(error);
+            console.log("no user");
+            displayText("Please login to make changes");
+
         }
         
     }
@@ -71,8 +78,9 @@ export default function Firestore(){
 
     return (
         <div className="h-screen w-screen bg-emerald-500 justify-around  ">
-
-            <div className="flex flex-col">
+            
+            {/* Movie creation Form */}
+            <div className="flex flex-col bg-slate-300 w-max h-[300px] mx-auto py-7 rounded my-3">
                 <input
                     type="text"
                     value={formTitle}
@@ -102,22 +110,23 @@ export default function Firestore(){
                     className="w-[100px] ml-3 bg-white p-1 text-[14px] rounded">
                         Submit Movie
                 </button>
+                <div ref={display}></div>
                 
             </div>
             <div className="flex gap-5 justify-center flex-wrap">
                 {
                     movieList &&
-                    movieList.map((doc)=>(
+                    movieList.map((movie)=>(
 
                         <div className=" bg-gray-700 rounded w-[150px] h-[180px] flex flex-col justify-center text-white">
-                            <h2>{doc.title}</h2>
-                            <h3>{doc.releaseYear}</h3>
-                            <h3>{doc.wonOscar ? "Oscar" : "No oscar"}</h3>
+                            <h2>{movie.title}</h2>
+                            <h3>{movie.releaseYear}</h3>
+                            <h3>{movie.wonOscar ? "Oscar" : "No oscar"}</h3>
 
-                            <button onClick={()=> deleteMovie(doc.id)}  className="bg-black w-[80%] mx-auto rounded"> Delete </button>
+                            <button onClick={()=> deleteMovie(movie.id)}  className="bg-black w-[80%] mx-auto rounded"> Delete </button>
 
                             <input className="w-[80%] mx-auto rounded mt-2 mb-2 text-black" placeholder="update title..." value={updatedTitle} onChange={(e)=> setUpdatedTitle(e.target.value)}/>
-                            <button onClick={()=> updateTitle(doc.id)}  className="bg-black w-[80%] mx-auto rounded">update</button>
+                            <button onClick={()=> updateTitle(movie.id)}  className="bg-black w-[80%] mx-auto rounded">update</button>
                         </div>
                     ))
                 }
