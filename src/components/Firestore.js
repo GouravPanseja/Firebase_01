@@ -2,6 +2,7 @@ import {useState,useEffect,useRef} from "react"
 import {db,auth} from "../config/firebase";
 import { getDocs,collection, addDoc, deleteDoc, doc, updateDoc} from "firebase/firestore";
 
+
 export default function Firestore(){
     const [movieList , setMovieList] = useState([]);
     const movieCollectionRef = collection(db,"Movies");
@@ -49,13 +50,14 @@ export default function Firestore(){
                 title: formTitle,
                 releaseYear: formReleaseYear,
                 wonOscar: formWonOscar, 
-                uid:auth.currentUser.uid,
+                uid:auth.currentUser.uid,             // there is no email that's why it failed
             })
+            
             // refresh movies
-            getMoviesList();
+            getMoviesList();    
         }
         catch(error){
-            console.log("no user");
+            console.log("No user")
             displayText("Please login to make changes");
 
         }
@@ -63,16 +65,27 @@ export default function Firestore(){
     }
 
     const deleteMovie = async (id)=>{
-       
-        const movieDoc = doc(db,"Movies",id);
-        await deleteDoc(movieDoc); 
-        getMoviesList();
+        try{
+            const movieDoc = doc(db,"Movies",id);
+            await deleteDoc(movieDoc); 
+            getMoviesList();
+        }
+        catch{
+            displayText("Can't delete")
+        }
+        
     }
 
     const updateTitle = async(id)=>{
-        const movieDoc = doc(db,"Movies",id);
-        await updateDoc(movieDoc,{title:updatedTitle} )
-        getMoviesList();
+        try{
+            const movieDoc = doc(db,"Movies",id);
+            await updateDoc(movieDoc,{title:updatedTitle} )
+            getMoviesList();
+        }
+        catch{
+            displayText("Can't update")
+        }
+        
     }
 
 
@@ -80,7 +93,7 @@ export default function Firestore(){
         <div className="h-screen w-screen bg-emerald-500 justify-around  ">
             
             {/* Movie creation Form */}
-            <div className="flex flex-col bg-slate-300 w-max h-[300px] mx-auto py-7 rounded my-3">
+            <div className="flex flex-col bg-slate-300 w-[250px] h-[300px] mx-auto py-7 rounded my-3">
                 <input
                     type="text"
                     value={formTitle}
